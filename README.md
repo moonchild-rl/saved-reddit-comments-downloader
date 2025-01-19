@@ -1,5 +1,7 @@
 # **Saved Reddit Comments Downloader**
-This is a script that downloads all your saved comments from reddit. It can be used to give each file a name and organize them into folders. The naming and folder scheme is similar to that of the [Bulk Downloader for Reddit (BDFR)](https://github.com/Serene-Arc/bulk-downloader-for-reddit). The script also automatically downloads images and gifs found within the comments!
+This is a script that downloads all your saved comments from reddit. It can be used to give each file a name and organize them into folders. The naming and folder scheme is similar to that of the [Bulk Downloader for Reddit (BDFR)](https://github.com/Serene-Arc/bulk-downloader-for-reddit). 
+
+The script is also able to automatically download any images and GIFs found in the comments!
 
 ## **Installation**
 
