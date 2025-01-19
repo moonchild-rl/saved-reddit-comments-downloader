@@ -30,6 +30,11 @@ parser.add_argument(
     help="Directory to save the downloaded comments in.",
 )
 parser.add_argument(
+    "--skip-images",
+    action="store_true",
+    help="If set, skips downloading images or GIFs linked in comments.",
+)
+parser.add_argument(
     "--unsave",
     action="store_true",
     help="If set, unsaves the downloaded comments from Reddit.",
@@ -114,25 +119,31 @@ for permalink, comment_id in zip(permalinks, comment_ids):
         print(f"Saved {file_base} to: {subreddit}")
 
         # Step 6: Check for Image/GIF URLs in the comment body and download them too
-        image_urls = re.findall(
-            r"(?:https:\/\/preview\.redd\.it\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif)).*",
-            comment.body,
-        )
-        for img_url in image_urls:
-            try:
-                # Name the image or gif
-                img_name = os.path.basename(urlparse(img_url).path)
-                img_path = os.path.join(subreddit_dir, img_name)
+        if not args.skip_images:
+            image_urls = re.findall(
+                r"(?:https:\/\/preview\.redd\.it\/[^\s]+(?:\.jpg|\.jpeg|\.png|\.gif)).*",
+                comment.body,
+            )
+            for img_url in image_urls:
+                try:
+                    # Extract the image name from the URL
+                    img_base = os.path.basename(urlparse(img_url).path)
 
-                # Download and save the image
-                img_data = requests.get(img_url).content
-                with open(img_path, "wb") as img_file:
-                    img_file.write(img_data)
+                    # Combine file_name and image name
+                    img_name = f"{file_base}_{img_base}"
 
-                print(f"Downloaded image from: {img_url}")
+                    # Full path for the image file
+                    img_path = os.path.join(subreddit_dir, img_name)
 
-            except Exception as img_error:
-                print(f"Error downloading image {img_url}: {img_error}")
+                    # Download and save the image
+                    img_data = requests.get(img_url).content
+                    with open(img_path, "wb") as img_file:
+                        img_file.write(img_data)
+
+                    print(f"Downloaded {img_name} to: {subreddit}")
+
+                except Exception as img_error:
+                    print(f"Error downloading image {img_url}: {img_error}")
 
         # Step 7: Unsave the comment if the --unsave flag is set
         if args.unsave:
